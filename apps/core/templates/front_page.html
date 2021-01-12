@@ -1,0 +1,68 @@
+{% extends 'base.html' %} 
+{% block content %} 
+{% for product in products %}
+<br/>
+<div class="card row m-2" style="width: 13rem" >
+  <img src="{{ product.thumbnail }}" class="card-img-top"> 
+  <div class="card-body" id="productapp">
+    <h5 class="card-title">{{ product.title }}</h5>
+    <p class="card-title">{{ product.price }} $</p>
+    <p class="card-title">{{ product.category }}</p>
+    <a
+      href="{% url 'product_detail' product.category.slug product.slug %}"
+      class="btn btn-primary m-2"
+      >view product</a>
+     <a
+     @click="addtocart( {{ product.id }} )"
+      class="btn btn-success m-3"
+      >add to cart</a>
+    
+  </div>
+</div>
+<br />
+
+{% endfor %} {% endblock %}
+{% block scripts %}
+<script>
+    var productapp = new Vue({
+        el: '#productapp',
+        delimiters: ['[[', ']]'],
+        store: store,
+        data() {
+            return {
+            }
+        },
+        mounted() {
+            console.log('Mounted');
+        },
+        methods: {
+            addtocart(product_id,price) {
+                
+                store.commit('increment', 1);
+                store.commit('changeTotalCost', parseFloat(price));
+
+                var data = { 'product_id': product_id, 'update': false, 'quantity': 1 };
+
+                fetch('/api/add_to_cart/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token}}'
+                    },
+                    credentials: 'same-origin',
+                    body: JSON.stringify(data)
+                })
+                    .then((response) => {
+                        console.log(response);
+
+                    })
+                    .catch(function (error) {
+                        console.log('Error 2');
+                        console.log(error);
+
+                    })
+            }
+        }
+    })
+</script>
+{% endblock %}
