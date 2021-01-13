@@ -39,7 +39,6 @@ urlpatterns = [
     # API
     path('api/add_to_cart/', add_to_cart, name='add_to_cart'),
     path('api/remove_from_cart/', remove_from_cart, name = 'remove_from_cart'),
-    # path('api/checkout/', checkout, name='checkout'),
     path('api/create_checkout_session/', create_checkout_session, name='create_checkout_session'),
     
 

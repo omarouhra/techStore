@@ -10,9 +10,12 @@ def checkoutCreate(request, first_name, last_name, email, address, zipcode, plac
 
     order = Order(first_name=first_name, last_name=last_name, email=email,
                   address=address, zipcode=zipcode, place=place, phone=phone)
+    if request.user.is_authenticated:
+        order.user = request.user
     order.save()
 
     cart = Cart(request)
+
 
     for item in cart:
         OrderItem.objects.create(

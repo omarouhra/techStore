@@ -59,7 +59,6 @@ def create_checkout_session(request):
         }
 
         items.append(obj)
-
     session = stripe.checkout.Session.create(
         payment_method_types=['card'],
         line_items=items,
@@ -86,32 +85,9 @@ def create_checkout_session(request):
 
     order.save()
 
+    print(items)
+
 
     return JsonResponse({'session' : session })
 
-# def checkout(request):
-#     cart = Cart(request)
-#     data = json.loads(request.body)
-#     jsonresponse = {'success': True}
-#     first_name = data['first_name']
-#     last_name = data['last_name']
-#     email = data['email']
-#     address = data['address']
-#     zipcode = data['zipcode']
-#     place = data['place']
-#     phone = data['phone']
 
-#     orderid = checkoutCreate(request, first_name, last_name,
-#                              email, address, zipcode, place, phone)
-
-#     paid = True
-
-#     if paid == True:
-#         order = Order.objects.get(pk=orderid)
-#         order.paid = True
-#         order.paid_amount = cart.get_total_cost()
-#         order.save()
-
-#         cart.clear()
-
-#     return redirect('/')
