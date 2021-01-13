@@ -7,5 +7,9 @@ class OrderAdmin(admin.ModelAdmin):
     list_display = ['first_name', 'email', 'phone', 'paid_amount', 'status']
 
 
+class OrderItemsAdmin(admin.ModelAdmin):
+    list_display = ['order', 'product', 'price', 'quantity']
+
+
 admin.site.register(Order, OrderAdmin)
-admin.site.register(OrderItem)
+admin.site.register(OrderItem, OrderItemsAdmin)

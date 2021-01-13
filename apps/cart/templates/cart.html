@@ -83,7 +83,11 @@
             </div>
         </div>
     </form>
-<button @click="buy()">checkout with strip<button>
+    <div v-if="error.length > 0" v-for="error in errors" class="alert alert-primary" role="alert">
+             [[ error ]]  
+    </div>
+
+<button @click="buy()">checkout with strip</button>
 
 </div>
 
@@ -104,6 +108,7 @@
         store: store,
         data() {
             return {
+                errors : [],
                 first_name: '',
                 last_name: '',
                 email: '',
@@ -129,30 +134,67 @@
         },
         methods: {
           buy() {
-              var stripe = Stripe('{{ pub_key }}');
+               var data= { 
+                'first_name': this.first_name,
+                'last_name': this.last_name,
+                'email': this.email,
+                'address': this.address,
+                'zipcode': this.zipcode,
+                'place': this.place,
+                'phone': this.phone
+              };
 
-              fetch('/api/create_checkout_session/',{
-                   method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRFToken': '{{ csrf_token }}'
-                    },
-                    credentials: 'same-origin',
-                })
-                .then(function(response) {
-                     return response.json()
-                })
-                .then(function(session) {
-                    return stripe.redirectToCheckout({ sessionId: session.session.id })
-                })
-                .then(function(result) {
-                    if(result.error){
-                        alert(result.error.message)
-                    }
-                })
-                .catch(function (error) {
-                        console.log(error);
-                });
+              this.errors = [];
+
+                if(data.first_name === ''){
+                    this.errors.push('first name is empty')
+                };
+                if(data.last_name === ''){
+                    this.errors.push('last name is empty')
+                };
+                if(data.email === ''){
+                    this.errors.push('email is empty')
+                };
+                if(data.address === ''){
+                    this.errors.push('address is empty')
+                };
+                if(data.zipcode === ''){
+                    this.errors.push('zipcode is empty')
+                };
+                if(data.phone === ''){
+                    this.errors.push('phone is empty')
+                };
+
+
+                if(this.errors.length === 0){
+                    var stripe = Stripe('{{ pub_key }}');
+
+                    fetch('/api/create_checkout_session/',{
+                        method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRFToken': '{{ csrf_token }}'
+                            },
+                            credentials: 'same-origin',
+                            body: JSON.stringify(data)
+
+                        })
+                        .then(function(response) {
+                            return response.json()
+                        })
+                        .then(function(session) {
+                            return stripe.redirectToCheckout({ sessionId: session.session.id })
+                        })
+                        .then(function(result) {
+                            if(result.error){
+                                alert(result.error.message)
+                            }
+                        })
+                        .catch(function (error) {
+                                console.log(error);
+                        });
+
+                }
 
             },                       
           submitForm() {

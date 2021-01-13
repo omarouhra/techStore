@@ -68,12 +68,7 @@ def create_checkout_session(request):
         cancel_url = 'http://127.0.0.1:8000/cart/',
     )
 
-    return JsonResponse({'session' : session })
-
-def checkout(request):
-    cart = Cart(request)
     data = json.loads(request.body)
-    jsonresponse = {'success': True}
     first_name = data['first_name']
     last_name = data['last_name']
     email = data['email']
@@ -81,18 +76,42 @@ def checkout(request):
     zipcode = data['zipcode']
     place = data['place']
     phone = data['phone']
+    payment_intent=session.payment_intent
+    orderid = checkoutCreate(request, first_name, last_name, email, address, zipcode, place, phone)
 
-    orderid = checkoutCreate(request, first_name, last_name,
-                             email, address, zipcode, place, phone)
+    order = Order.objects.get(pk=orderid)
+    order.payment_intent = payment_intent
+    order.paid = True
+    order.paid_amount = cart.get_total_cost()
 
-    paid = True
+    order.save()
 
-    if paid == True:
-        order = Order.objects.get(pk=orderid)
-        order.paid = True
-        order.paid_amount = cart.get_total_cost()
-        order.save()
 
-        cart.clear()
+    return JsonResponse({'session' : session })
 
-    return redirect('/')
+# def checkout(request):
+#     cart = Cart(request)
+#     data = json.loads(request.body)
+#     jsonresponse = {'success': True}
+#     first_name = data['first_name']
+#     last_name = data['last_name']
+#     email = data['email']
+#     address = data['address']
+#     zipcode = data['zipcode']
+#     place = data['place']
+#     phone = data['phone']
+
+#     orderid = checkoutCreate(request, first_name, last_name,
+#                              email, address, zipcode, place, phone)
+
+#     paid = True
+
+#     if paid == True:
+#         order = Order.objects.get(pk=orderid)
+#         order.paid = True
+#         order.paid_amount = cart.get_total_cost()
+#         order.save()
+
+#         cart.clear()
+
+#     return redirect('/')

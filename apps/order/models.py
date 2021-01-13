@@ -15,8 +15,7 @@ class Order(models.Model):
         (ARRIVED, 'Arrived')
     )
 
-    user = models.ForeignKey(User, related_name='orders',
-                             on_delete=models.SET_NULL, blank=True, null=True)
+    user = models.ForeignKey(User, related_name='orders', on_delete=models.SET_NULL, blank=True, null=True)
 
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
@@ -30,7 +29,6 @@ class Order(models.Model):
 
     paid = models.BooleanField(default=False)
     paid_amount = models.FloatField(blank=True, null=True)
-    used_coupon = models.CharField(max_length=50, blank=True, null=True)
 
     payment_intent = models.CharField(max_length=255, blank=True)
 
