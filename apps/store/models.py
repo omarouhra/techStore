@@ -2,6 +2,7 @@ from django.db import models
 from io import BytesIO
 from django.core.files import File
 from django.db import models
+from PIL import Image
 
 
 # Create your models here.
@@ -32,14 +33,13 @@ class Product(models.Model):
         ('disponible', 'True'),
         ('non disponible', 'false')
     )
-    category = models.ForeignKey(
-        Category, related_name='products', on_delete=models.CASCADE)
+    category = models.ForeignKey(Category, related_name='products', on_delete=models.CASCADE)
     title = models.CharField(max_length=150)
     slug = models.SlugField(max_length=255, blank=True)
     description = models.CharField(max_length=255, blank=True)
-    image = models.ImageField(blank=True, null=True, upload_to='media/uploads/')
+    image = models.ImageField(blank=True, null=True, upload_to='uploads/')
     thumbnail = models.ImageField(
-        blank=True, null=True, upload_to='media/uploads/')
+        blank=True, null=True, upload_to='uploads/')
     price = models.FloatField()
     amount = models.IntegerField(null=True)
     details = models.TextField()
