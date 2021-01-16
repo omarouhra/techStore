@@ -16,9 +16,8 @@ def checkoutCreate(request, first_name, last_name, email, address, zipcode, plac
 
     cart = Cart(request)
 
-
     for item in cart:
         OrderItem.objects.create(
             order=order, product=item['product'], price=item['price'], quantity=item['quantity'])
 
-        return order.id
+    return order.id
